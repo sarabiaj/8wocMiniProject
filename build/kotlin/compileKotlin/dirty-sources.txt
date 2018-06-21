@@ -1,7 +1,0 @@
-/Users/jenniferhuang/Documents/GitHub/8wocMiniProject/src/main/kotlin/USFMReader.kt
-/Users/jenniferhuang/Documents/GitHub/8wocMiniProject/src/main/kotlin/Api.kt
-/Users/jenniferhuang/Documents/GitHub/8wocMiniProject/src/main/kotlin/AppStyle.kt
-/Users/jenniferhuang/Documents/GitHub/8wocMiniProject/src/main/kotlin/Views.kt
-/Users/jenniferhuang/Documents/GitHub/8wocMiniProject/src/main/kotlin/Main.kt
-/Users/jenniferhuang/Documents/GitHub/8wocMiniProject/src/main/kotlin/TextInfo.kt
-/Users/jenniferhuang/Documents/GitHub/8wocMiniProject/src/main/kotlin/test.kt
