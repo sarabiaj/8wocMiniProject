@@ -1,0 +1,8 @@
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface Door43Api {
+    @GET("/v3/catalog.json")
+    fun getLang(@Query("language") lang: String): Call<CatalogResponse>;
+}
