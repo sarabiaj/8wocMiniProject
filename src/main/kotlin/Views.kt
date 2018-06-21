@@ -1,4 +1,3 @@
-import javafx.beans.Observable
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.layout.VBox
@@ -22,33 +21,18 @@ class MasterView: View(){
 }
 
 class TopView: View(){
-    val myController = MyController()
     // A collection to hold the names of all the books of the Bible
     val books = FXCollections.observableArrayList<String>(getBooks())
     // string property to hold book info
-    var book = SimpleStringProperty()
+    val book = SimpleStringProperty()
     // string property to hold chapter info
-    var chapter = SimpleStringProperty()
-    // number of chapters a book has
-    var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
-    // the available languages
-    val languages = FXCollections.observableArrayList<String>(getLanguages())
+    val chapter = SimpleStringProperty()
     // string property to hold the language info
     val language = SimpleStringProperty()
 
     override val root = Form()
-    // form to allow selection
+    // form to allow selction o
     init {
-        // listener that finds a chapter when called
-        book.addListener {  obs, old, new ->
-            // resets chapters
-            chapters.clear()
-            // for each chapter adds a number to chapters
-            for (j in 1..getChapters(new.toString())){
-                chapters.add(j.toString())
-            }
-            println(chapters.size)
-        }
         with(root) {
             fieldset {
                 // displays form horizontally
@@ -61,12 +45,12 @@ class TopView: View(){
                     // chapter field
                     vbox(5) {
                         label("Chapter:")
-                        combobox(chapter, chapters)
+                        textfield(chapter)
                     }
                     // language field
                     vbox(5) {
                         label("Language:")
-                        combobox(language, languages)
+                        textfield(language)
                     }
                     // search field
                     button("search") {
@@ -82,10 +66,10 @@ class TopView: View(){
     }
 
     /**
-     * Temp helper Function to get all the books of the Bible
+     * Function to get all the books of the Bible
      * Is pulled from books.txt in resources folder
      */
-    private fun getBooks(): ArrayList<String>{
+    fun getBooks(): ArrayList<String>{
         // the arraylist to be returned
         val ret = ArrayList<String>()
         // keeps track of the current line
@@ -102,40 +86,16 @@ class TopView: View(){
     }
 
     /**
-     * Temp helper function gets the number of chapters a book has
-     * returns 0 as default
+     * This function gets the selection and displays it
      */
-    private fun getChapters(book: String): Int{
-        // whether or not the book has been found
-        var found = false
-        // the number of chapters
-        var num = 0
-
-            // path to books of the Bible
-        File(System.getProperty("user.dir") + "/resources/books.txt").forEachLine {
-            // if the book is found then the next line is the number of chapters
-            if (it == book) {
-                found = true
-            } else if (found) {
-                num = it.toInt()
-                found = false
-            }
-        }
-
-        return num
-    }
-
-    /**
-     * Temp Help function to get a list of languages
-     */
-
-    private fun getLanguages(): List<String>{
-        return File(System.getProperty("user.dir") + "/resources/Languages.txt").readLines()
+    fun getSelection(){
+        TODO()
     }
 }
 
 class CenterView: View(){
     override val root = VBox()
+
     var bibleText = SimpleStringProperty()
 
     // form to allow selection
@@ -143,6 +103,13 @@ class CenterView: View(){
         with(root) {
             textarea {
                 textProperty().bind(bibleText)
+
+    // form to allow selction o
+    init {
+        with(root) {
+            val tmpFile = File(System.getProperty("user.dir") + "/resources/filler.txt")
+            textarea(tmpFile.readText()) {
+
                 wrapTextProperty().set(true)
                 editableProperty().set(false)
                 useMaxWidth = true
@@ -159,11 +126,8 @@ class CenterView: View(){
 }
 
 class MyController: Controller()  {
-    // Test function to see if data is being pulled correctly
-    fun Test(book: String, chapter: String, language: String) {
-        println(book)
-        println(chapter)
-        println(language)
+    fun writeToDb(inputValue: String) {
+        println("Writing $inputValue to database!")
     }
 
     fun search(book: String, chapter: String, language: String): String{

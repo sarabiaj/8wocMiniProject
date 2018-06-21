@@ -1,14 +1,16 @@
 import retrofit2.*
+import retrofit2.converter.moshi.MoshiConverterFactory
+
 class Api(){
     private val door43Api: Door43Api
 
-i   init {
+   init {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.door43.org/v3/catalog.json")
+            .baseUrl("https://api.door43.org/v3/catalog.json/")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
-        door43Api = retrofit.create(door43Api::class.java)
+        door43Api = retrofit.create(Door43Api::class.java)
     }
 
     fun getLanguage(lang: String): Call<CatalogResponse> {
@@ -16,6 +18,3 @@ i   init {
     }
 }
 
-fun main(args: Array<String>){
-    println("a")
-}
