@@ -70,7 +70,9 @@ class TopView: View(){
                     }
                     // search field
                     button("search") {
-                        action { myController.Test(book.toString(), chapter.toString(), language.toString()) }
+                        action {
+                            var centerView = find(CenterView::class)
+                            centerView.updateText(myController.search(book.value, chapter.value, language.value)) }
                     }
                     addClass(AppStyle.wrapper)
                 }
@@ -134,12 +136,13 @@ class TopView: View(){
 
 class CenterView: View(){
     override val root = VBox()
-    val tmpFile = File(System.getProperty("user.dir") + "/resources/filler.txt")
-    var text  = SimpleStringProperty(tmpFile.readText())
+    var bibleText = SimpleStringProperty()
+
     // form to allow selection
     init {
         with(root) {
-            textarea(text.toString()) {
+            textarea {
+                textProperty().bind(bibleText)
                 wrapTextProperty().set(true)
                 editableProperty().set(false)
                 useMaxWidth = true
@@ -150,7 +153,9 @@ class CenterView: View(){
 
     }
 
-
+    fun updateText(text: String){
+        bibleText.value = text
+    }
 }
 
 class MyController: Controller()  {
@@ -163,8 +168,7 @@ class MyController: Controller()  {
 
     fun search(book: String, chapter: String, language: String): String{
         // makes some function call here
-        val tmpFile = File("../resources/filler.txt")
-        return tmpFile.readText()
+        return "Book: $book Chapter: $chapter Language: $language"
     }
 }
 
