@@ -21,18 +21,33 @@ class MasterView: View(){
 }
 
 class TopView: View(){
+    val myController = MyController()
     // A collection to hold the names of all the books of the Bible
     val books = FXCollections.observableArrayList<String>(getBooks())
     // string property to hold book info
-    val book = SimpleStringProperty()
+    var book = SimpleStringProperty()
     // string property to hold chapter info
-    val chapter = SimpleStringProperty()
+    var chapter = SimpleStringProperty()
+    // number of chapters a book has
+    var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
+    // the available languages
+    val languages = FXCollections.observableArrayList<String>(getLanguages())
     // string property to hold the language info
     val language = SimpleStringProperty()
 
     override val root = Form()
     // form to allow selction o
     init {
+        // listener that finds a chapter when called
+        book.addListener {  obs, old, new ->
+            // resets chapters
+            chapters.clear()
+            // for each chapter adds a number to chapters
+            for (j in 1..getChapters(new.toString())){
+                chapters.add(j.toString())
+            }
+            println(chapters.size)
+        }
         with(root) {
             fieldset {
                 // displays form horizontally
@@ -45,18 +60,19 @@ class TopView: View(){
                     // chapter field
                     vbox(5) {
                         label("Chapter:")
-                        textfield(chapter)
+                        combobox(chapter, chapters)
                     }
                     // language field
                     vbox(5) {
                         label("Language:")
-                        textfield(language)
+                        combobox(language, languages)
                     }
                     // search field
                     button("search") {
                         action {
-                            var centerView = find(CenterView::class)
-                            centerView.updateText(myController.search(book.value, chapter.value, language.value)) }
+                            val centerView = find(CenterView::class)
+                            centerView.updateText(
+                                    myController.search(book.value, chapter.value, language.value))}
                     }
                     addClass(AppStyle.wrapper)
                 }
@@ -86,10 +102,35 @@ class TopView: View(){
     }
 
     /**
-     * This function gets the selection and displays it
+    * Temp helper function gets the number of chapters a book has
+    * returns 0 as default
+    */
+    private fun getChapters(book: String): Int{
+        // whether or not the book has been found
+        var found = false
+        // the number of chapters
+        var num = 0
+
+        // path to books of the Bible
+        File(System.getProperty("user.dir") + "/resources/books.txt").forEachLine {
+            // if the book is found then the next line is the number of chapters
+            if (it == book) {
+                found = true
+            } else if (found) {
+                num = it.toInt()
+                found = false
+            }
+        }
+
+        return num
+    }
+
+    /**
+     * Temp Help function to get a list of languages
      */
-    fun getSelection(){
-        TODO()
+
+    private fun getLanguages(): List<String>{
+        return File(System.getProperty("user.dir") + "/resources/Languages.txt").readLines()
     }
 }
 
@@ -98,18 +139,11 @@ class CenterView: View(){
 
     var bibleText = SimpleStringProperty()
 
-    // form to allow selection
-    init {
-        with(root) {
-            textarea {
-                textProperty().bind(bibleText)
-
     // form to allow selction o
     init {
         with(root) {
-            val tmpFile = File(System.getProperty("user.dir") + "/resources/filler.txt")
-            textarea(tmpFile.readText()) {
-
+            textarea() {
+                textProperty().bind(bibleText)
                 wrapTextProperty().set(true)
                 editableProperty().set(false)
                 useMaxWidth = true
