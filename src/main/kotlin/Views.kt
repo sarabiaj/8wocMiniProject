@@ -142,13 +142,14 @@ class CenterView: View(){
                         textProperty().bind(bibleText)
                         wrapTextProperty().set(true)
                         textAlignmentProperty().value = TextAlignment.CENTER
-                        prefWidth = 400.00
+
                     }
                     useMaxWidth = true
                     useMaxHeight = true
-                    prefWidth = 400.00
-                    prefHeight = 400.00
+                    prefWidth = 400.0
                 }
+                prefHeight = 400.0
+                prefWidth = 400.0
             }
             alignmentProperty().value = Pos.CENTER
             addClass(AppStyle.textWrapper)
