@@ -18,7 +18,7 @@ class bookResponse(
         val title: String
 )
 
-// data clas
+// data class
 class formatResponse(
         val format: String,
         val url: String
