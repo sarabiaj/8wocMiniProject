@@ -137,18 +137,24 @@ class TopView: View(){
                         addClass(AppStyle.wrapper)
                     }
 
-                    hbox {
+                    hbox(10) {
                         // field to change the text size
                         field("Text Size") {
-                            textfield (textSize)
+                            textfield (textSize){
+                                prefWidth = 50.0
+                            }
                         }
-                        // field for a button to change text size
-                        button("Change font Size"){
-                            // when pressed updates font size
-                            action {
-                                if(textSize.value != null){
-                                    centerView.updateFontSize(textSize.doubleValue())
+                        field {
+                            // field for a button to change text size
+                            button("Change font Size") {
+                                // when pressed updates font size
+                                action {
+                                    if (textSize.value != null) {
+                                        centerView.updateFontSize(textSize.doubleValue())
+                                    }
                                 }
+
+
                             }
                         }
                     }
