@@ -1,4 +1,3 @@
-import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
@@ -85,9 +84,7 @@ class TopView: View(){
                                 }
                                 wrapTextProperty().set(true)
                             }
-
                         }
-
                         // book field
                         vbox(5) {
                             label("Book:")
@@ -128,7 +125,9 @@ class TopView: View(){
                     hbox {
                         field("Text Size") {
                             val centerView = find(CenterView::class)
-                            textfield (textSize)
+                            textfield (textSize){
+                                useMaxWidth = true
+                            }
                         }
                         button("Change font Size"){
                             action {
