@@ -1,6 +1,8 @@
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
+import javafx.geometry.Pos
 import javafx.scene.layout.VBox
+import javafx.scene.text.TextAlignment
 import tornadofx.*
 import java.io.File
 
@@ -94,7 +96,7 @@ class TopView: View(){
                                 val centerView = find(CenterView::class)
                                 if (book.value != null && chapter.value != null && language.value != null) {
                                     centerView.updateText(
-                                            myController.search(book.value, chapter.value))
+                                            myController.search(book.value, chapter.value), book.value, chapter.value)
                                 } else {
                                     centerView.updateText("Invalid, try again")
                                 }
@@ -112,27 +114,46 @@ class TopView: View(){
 class CenterView: View(){
     override val root = VBox()
 
+    var book = SimpleStringProperty()
+    var chapter = SimpleStringProperty()
     var bibleText = SimpleStringProperty()
 
     // form to allow selction o
     init {
         with(root) {
-            textarea() {
-                textProperty().bind(bibleText)
-                wrapTextProperty().set(true)
-                editableProperty().set(false)
+            scrollpane {
+                label {
+                    textProperty().bind(book)
+                }
+                label {
+
+                    textProperty().bind(bibleText)
+                    wrapTextProperty().set(true)
+                    textAlignmentProperty().value = TextAlignment.CENTER
+                    prefWidth = 400.00
+                    prefHeight = 400.00
+
+                }
                 useMaxWidth = true
                 useMaxHeight = true
                 prefWidth = 400.00
                 prefHeight = 400.00
             }
+            alignmentProperty().value = Pos.CENTER
             addClass(AppStyle.textWrapper)
+
 
         }
 
     }
 
     fun updateText(text: String){
+        this.book.value = text
+    }
+
+    fun updateText(text: String, book: String, chapter: String){
+        this.book.value = book
+        this.chapter.value = chapter
         bibleText.value = text
     }
 }
@@ -146,21 +167,29 @@ class MyController: Controller()  {
     fun search(book: String, chapter: String): String{
         // makes some function call here
         val text = door43Manager.getUSFM(book)
-        return parseUSFM(text!!,book, chapter)
+        return parseUSFM(text!!, chapter)
     }
 
-    fun parseUSFM(text: String,book: String, chapter: String): String{
+    fun parseUSFM(text: String, chapter: String): String{
         var lines = text.lines()
         val nextChapter = (chapter.toInt() + 1).toString()
-        val selection = arrayListOf<String>(book)
+        val selection = arrayListOf<String>()
 
-        if(lines.indexOf("\\c $nextChapter") > 0) {
-            selection.addAll(lines.subList(lines.indexOf("\\c $chapter"), lines.indexOf("\\c $nextChapter")))
+        lines = if(lines.indexOf("\\c $nextChapter") > 0) {
+            lines.subList(lines.indexOf("\\c $chapter"), lines.indexOf("\\c $nextChapter"))
         } else {
-            selection.addAll(lines.subList(lines.indexOf("\\c $chapter"), lines.size))
+            lines.subList(lines.indexOf("\\c $chapter"), lines.size)
         }
 
-        return selection.joinToString(System.lineSeparator())
+        lines.forEach {
+            if(it.contains("\\v")){
+                selection.add(it.replace("\\v", ""))
+            } else if (it.contains("\\p")){
+                selection.add(System.lineSeparator())
+            }
+        }
+
+        return selection.joinToString()
 
 
     }
