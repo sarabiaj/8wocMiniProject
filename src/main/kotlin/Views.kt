@@ -233,18 +233,22 @@ class MyController: Controller()  {
      */
     fun parseUSFM(text: String, chapter: String): String{
         // a list of lines in the text
-        var lines = text.lines()
+        var lines = ArrayList<String>()
         // the next chapter after the one being searched
         val nextChapter = (chapter.toInt() + 1).toString()
         // the list that conatins the text to be returned
         val selection = arrayListOf<String>()
+        text.lines().forEach {
+            lines.add(it.trim())
+        }
 
         // gets a sublist up to the next chapter or end of file
-        lines = if(lines.indexOf("\\c $nextChapter") > 0) {
-            lines.subList(lines.indexOf("\\c $chapter"), lines.indexOf("\\c $nextChapter"))
+        lines = if (lines.indexOf("\\c $nextChapter") > 0) {
+            ArrayList(lines.subList(lines.indexOf("\\c $chapter"), lines.indexOf("\\c $nextChapter")))
         } else {
-            lines.subList(lines.indexOf("\\c $chapter"), lines.size)
+            ArrayList(lines.subList(lines.indexOf("\\c $chapter"), lines.size))
         }
+
 
         // looks through each line adding verses
         lines.forEach {
