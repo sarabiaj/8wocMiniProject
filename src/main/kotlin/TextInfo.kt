@@ -1,25 +1,22 @@
-class CatalogResponse(val data: Info)
+class CatalogResponse(val languages: List<LanguageResponse>)
 
-class Info(
-        val languages: List<SubLang>,
-        val source: List<SubSrce>
+class LanguageResponse(
+        val title: String,
+        val resources: List<ResourceResponse>
 )
 
-class SubLang(
-        val identifier: String, //version
-        val projects: List<SubProj>
+class ResourceResponse(
+        val projects: List<bookResponse>,
+        val subject: String
 )
 
-class SubProj(
-        val formats: List<SubForm>,
-        val identifier: String,//book
-        val sort: Int //book number
+class bookResponse(
+        val formats: List<formatResponse>,
+        val title: String
 )
 
-class SubForm (
-     val url: String //usfm file
+class formatResponse(
+        val format: String,
+        val url: String
 )
 
-class SubSrce (
-        val lang: String //language
-)

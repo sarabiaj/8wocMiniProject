@@ -6,7 +6,7 @@ class Api(){
 
    init {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.door43.org/v3/catalog.json/")
+            .baseUrl("https://api.door43.org/")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 

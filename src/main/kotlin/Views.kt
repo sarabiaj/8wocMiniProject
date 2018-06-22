@@ -14,6 +14,7 @@ import java.io.File
 class MasterView: View(){
     // Embeds the top view and center view
     override val root = borderpane {
+
         top<TopView>()
         center<CenterView>()
     }
@@ -21,9 +22,10 @@ class MasterView: View(){
 }
 
 class TopView: View(){
+    val door43Manager: Door43Manager = Door43Manager()
     val myController = MyController()
     // A collection to hold the names of all the books of the Bible
-    val books = FXCollections.observableArrayList<String>(getBooks())
+    val books = FXCollections.observableArrayList<String>(door43Manager.getBooks("English"))
     // string property to hold book info
     var book = SimpleStringProperty()
     // string property to hold chapter info
@@ -38,43 +40,49 @@ class TopView: View(){
     override val root = Form()
     // form to allow selction o
     init {
+        language.addListener { obs, old, new ->
+            updateBooks(new)
+        }
+
         // listener that finds a chapter when called
         book.addListener {  obs, old, new ->
-            // resets chapters
-            chapters.clear()
-            // for each chapter adds a number to chapters
-            for (j in 1..getChapters(new.toString())){
-                chapters.add(j.toString())
-            }
-            println(chapters.size)
+            updateChapters(new)
         }
         with(root) {
             fieldset {
-                // displays form horizontally
-                hbox(20) {
-                    // book field
-                    vbox(5) {
-                        label("Book:")
-                        combobox(book, books)
+                vbox {
+                    // displays form horizontally
+                    hbox(20) {
+                        // book field
+                        vbox(5) {
+                            label("Book:")
+                            combobox(book, books)
+                        }
+                        // chapter field
+                        vbox(5) {
+                            label("Chapter:")
+                            combobox(chapter, chapters)
+                        }
+                        // language field
+                        vbox(5) {
+                            label("Language:")
+                            combobox(language, languages)
+                        }
+
+                        addClass(AppStyle.wrapper)
                     }
-                    // chapter field
-                    vbox(5) {
-                        label("Chapter:")
-                        combobox(chapter, chapters)
+                    hbox {
+                        // search field
+                        button("search") {
+                            action {
+                                val centerView = find(CenterView::class)
+                                centerView.updateText(
+                                        myController.search(book.value, chapter.value, language.value))
+
+                            }
+                        }
+                        addClass(AppStyle.wrapper)
                     }
-                    // language field
-                    vbox(5) {
-                        label("Language:")
-                        combobox(language, languages)
-                    }
-                    // search field
-                    button("search") {
-                        action {
-                            val centerView = find(CenterView::class)
-                            centerView.updateText(
-                                    myController.search(book.value, chapter.value, language.value))}
-                    }
-                    addClass(AppStyle.wrapper)
                 }
             }
         }
@@ -85,44 +93,19 @@ class TopView: View(){
      * Function to get all the books of the Bible
      * Is pulled from books.txt in resources folder
      */
-    fun getBooks(): ArrayList<String>{
-        // the arraylist to be returned
-        val ret = ArrayList<String>()
-        // keeps track of the current line
-        var i = 0
-        // goes through line by line adding books
-        File(System.getProperty("user.dir") + "/resources/books.txt").forEachLine {
-            // if i is a multiple of 4 then it is a a book name and should be added
-            if (i % 2 == 0) {
-                ret.add(it)
-            }
-            i++
-        }
-        return ret
+    fun updateBooks(language: String){
+        books.clear()
+        books.addAll(door43Manager.getBooks(language)!!)
+
     }
 
     /**
     * Temp helper function gets the number of chapters a book has
     * returns 0 as default
     */
-    private fun getChapters(book: String): Int{
-        // whether or not the book has been found
-        var found = false
-        // the number of chapters
-        var num = 0
-
-        // path to books of the Bible
-        File(System.getProperty("user.dir") + "/resources/books.txt").forEachLine {
-            // if the book is found then the next line is the number of chapters
-            if (it == book) {
-                found = true
-            } else if (found) {
-                num = it.toInt()
-                found = false
-            }
-        }
-
-        return num
+    private fun updateChapters(book: String){
+        chapters.clear()
+        chapters.addAll(door43Manager.getChapters(book))
     }
 
     /**
@@ -130,7 +113,7 @@ class TopView: View(){
      */
 
     private fun getLanguages(): List<String>{
-        return File(System.getProperty("user.dir") + "/resources/Languages.txt").readLines()
+        return door43Manager.getLanguages()
     }
 }
 
