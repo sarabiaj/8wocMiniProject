@@ -118,40 +118,51 @@ class CenterView: View(){
     var chapter = SimpleStringProperty()
     var bibleText = SimpleStringProperty()
 
-    // form to allow selction o
+    // form to allow to read selection
     init {
         with(root) {
             scrollpane {
-                label {
-                    textProperty().bind(book)
-                }
-                label {
-
-                    textProperty().bind(bibleText)
-                    wrapTextProperty().set(true)
-                    textAlignmentProperty().value = TextAlignment.CENTER
+                vbox {
+                    label {
+                        alignmentProperty().value = Pos.CENTER
+                        textProperty().bind(book)
+                        wrapTextProperty().set(true)
+                        textAlignmentProperty().value = TextAlignment.CENTER
+                        prefWidth = 400.00
+                    }
+                    label {
+                        alignmentProperty().value = Pos.CENTER
+                        textProperty().bind(chapter)
+                        wrapTextProperty().set(true)
+                        textAlignmentProperty().value = TextAlignment.CENTER
+                        prefWidth = 400.00
+                    }
+                    label {
+                        alignmentProperty().value = Pos.CENTER
+                        textProperty().bind(bibleText)
+                        wrapTextProperty().set(true)
+                        textAlignmentProperty().value = TextAlignment.CENTER
+                        prefWidth = 400.00
+                    }
+                    useMaxWidth = true
+                    useMaxHeight = true
                     prefWidth = 400.00
                     prefHeight = 400.00
-
                 }
-                useMaxWidth = true
-                useMaxHeight = true
-                prefWidth = 400.00
-                prefHeight = 400.00
             }
             alignmentProperty().value = Pos.CENTER
             addClass(AppStyle.textWrapper)
-
-
         }
 
     }
+
 
     fun updateText(text: String){
         this.book.value = text
     }
 
     fun updateText(text: String, book: String, chapter: String){
+        println(book)
         this.book.value = book
         this.chapter.value = chapter
         bibleText.value = text
