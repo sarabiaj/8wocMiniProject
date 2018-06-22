@@ -23,8 +23,8 @@ class MasterView: View(){
 
     init{
         with(root){
-            prefWidth = 700.00
-            prefHeight = 500.00
+            prefWidth = 800.00
+            prefHeight = 600.00
         }
     }
 
@@ -68,13 +68,13 @@ class TopView: View(){
             fieldset {
                 vbox {
                     // displays form horizontally
-                    hbox(30) {
+                    hbox(35) {
                         vbox(0){
                             label ("USFM Reader"){
 
                                 style {
                                     fontWeight = FontWeight.EXTRA_BOLD
-                                    fontSize = 20.px
+                                    fontSize = 25.px
                                 }
                                 wrapTextProperty().set(true)
                             }
@@ -135,20 +135,6 @@ class CenterView: View(){
         with(root) {
             scrollpane(true,false) {
                 vbox {
-                    label {
-                        alignmentProperty().value = Pos.CENTER
-                        textProperty().bind(book)
-                        wrapTextProperty().set(true)
-                        textAlignmentProperty().value = TextAlignment.CENTER
-
-                    }
-                    label {
-                        alignmentProperty().value = Pos.CENTER
-                        textProperty().bind(chapter)
-                        wrapTextProperty().set(true)
-                        textAlignmentProperty().value = TextAlignment.CENTER
-
-                    }
                     label {
                         alignmentProperty().value = Pos.CENTER
                         textProperty().bind(bibleText)

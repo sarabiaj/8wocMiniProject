@@ -15,13 +15,13 @@ class AppStyle: Stylesheet(){
 
         wrapper {
             // adds padding to fields
-            padding = box(10.px)
+            padding = box(20.px)
 
         }
 
         textWrapper{
             backgroundColor += c("#d49942")
-            padding = box(10.px)
+            padding = box(15.px)
             wrapText = true
 
         }
