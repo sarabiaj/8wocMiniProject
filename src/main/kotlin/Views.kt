@@ -41,21 +41,17 @@ class TopView: View(){
     // form to allow selction o
     init {
         language.addListener { obs, old, new ->
-            val currChap = chapter.value
-            val currBook = book.value
             books.clear()
             books.addAll(myController.getBooks(new))
-            chapter.value = currChap
-            book.value = currBook
+            book.value = books[0]
         }
 
         // listener that finds a chapter when called
         book.addListener {  obs, old, new ->
             if(new != null) {
-                val currChap = chapter.value
                 chapters.clear()
                 chapters.addAll(myController.getChapters(new))
-                chapter.value = currChap
+                chapter.value = "1"
             }
         }
         with(root) {
