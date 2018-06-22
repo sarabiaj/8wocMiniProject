@@ -1,8 +1,12 @@
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Pos
 import javafx.stage.Screen
 import javafx.scene.layout.VBox
+import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import javafx.scene.text.TextAlignment
 import tornadofx.*
@@ -34,20 +38,22 @@ class MasterView: View(){
 
 class TopView: View(){
 
-    val myController = MyController()
+    private val myController = MyController()
     // A collection to hold the names of all the books of the Bible
-    val books = FXCollections.observableArrayList<String>(myController.getBooks("English"))
+    private val books = FXCollections.observableArrayList<String>(myController.getBooks("English"))
     // string property to hold book info
-    var book = SimpleStringProperty("Genesis")
+    private var book = SimpleStringProperty("Genesis")
     // string property to hold chapter info
-    var chapter = SimpleStringProperty("1")
+    private var chapter = SimpleStringProperty("1")
     // number of chapters a book has
     //var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
-    var chapters = FXCollections.observableArrayList<String>(myController.getChapters("Genesis"))
+    private var chapters = FXCollections.observableArrayList<String>(myController.getChapters("Genesis"))
     // the available languages
-    val languages = FXCollections.observableArrayList<String>(myController.getLanguages())
+    private val languages = FXCollections.observableArrayList<String>(myController.getLanguages())
     // string property to hold the language info
-    val language = SimpleStringProperty("English")
+    private val language = SimpleStringProperty("English")
+    private val centerView = find(CenterView::class)
+    private val textSize = SimpleIntegerProperty(centerView.getFontSize().toInt())
 
     override val root = Form()
     // form to allow selction o
@@ -66,6 +72,7 @@ class TopView: View(){
                 chapter.value = "1"
             }
         }
+
         with(root) {
             fieldset {
                 vbox {
@@ -107,7 +114,7 @@ class TopView: View(){
                             setPrefWidth(80.00)
                             setPrefHeight(50.00)
                             action {
-                                val centerView = find(CenterView::class)
+
                                 if (book.value != null && chapter.value != null && language.value != null) {
                                     centerView.updateText(
                                             myController.search(book.value, chapter.value), book.value, chapter.value)
@@ -116,7 +123,22 @@ class TopView: View(){
                                 }
                             }
                         }
+
                         addClass(AppStyle.wrapper)
+                    }
+
+                    hbox {
+                        field("Text Size") {
+                            val centerView = find(CenterView::class)
+                            textfield (textSize)
+                        }
+                        button("Change font Size"){
+                            action {
+                                if(textSize.value != null){
+                                    centerView.updateFontSize(textSize.doubleValue())
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -131,6 +153,7 @@ class CenterView: View(){
     var book = SimpleStringProperty()
     var chapter = SimpleStringProperty()
     var bibleText = SimpleStringProperty()
+    var bibleFont = SimpleObjectProperty<Font>(Font(20.0))
 
     // form to allow to read selection
     init {
@@ -142,6 +165,7 @@ class CenterView: View(){
                         textProperty().bind(bibleText)
                         wrapTextProperty().set(true)
                         textAlignmentProperty().value = TextAlignment.CENTER
+                        fontProperty().bind(bibleFont)
 
                     }
                     //useMaxWidth = true
@@ -165,6 +189,14 @@ class CenterView: View(){
         this.book.value = book
         this.chapter.value = chapter
         bibleText.value = text
+    }
+
+    fun getFontSize(): Double{
+        return bibleFont.value.size
+    }
+
+    fun updateFontSize(size: Double){
+        bibleFont.set(Font(size))
     }
 }
 
