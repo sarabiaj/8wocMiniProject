@@ -14,7 +14,6 @@ import java.io.File
 class MasterView: View(){
     // Embeds the top view and center view
     override val root = borderpane {
-
         top<TopView>()
         center<CenterView>()
     }
@@ -84,7 +83,7 @@ class TopView: View(){
                                 val centerView = find(CenterView::class)
                                 if (book.value != null && chapter.value != null && language.value != null) {
                                     centerView.updateText(
-                                            myController.search(book.value, chapter.value, language.value))
+                                            myController.search(book.value, chapter.value))
                                 }
                                 else{
                                     centerView.updateText("Invalid, try again")
@@ -97,10 +96,7 @@ class TopView: View(){
                 }
             }
         }
-
     }
-
-
 }
 
 class CenterView: View(){
@@ -134,11 +130,27 @@ class MyController: Controller()  {
         println("Writing $inputValue to database!")
     }
 
-    fun search(book: String, chapter: String, language: String): String{
+    fun search(book: String, chapter: String): String{
         // makes some function call here
-        return "Book: $book Chapter: $chapter Language: $language"
+        val text = door43Manager.getUSFM(book)
+        return parseUSFM(text!!,book, chapter)
     }
 
+    fun parseUSFM(text: String,book: String, chapter: String): String{
+        var lines = text.lines()
+        val nextChapter = (chapter.toInt() + 1).toString()
+        val selection = arrayListOf<String>(book)
+
+        if(lines.indexOf("\\c $nextChapter") > 0) {
+            selection.addAll(lines.subList(lines.indexOf("\\c $chapter"), lines.indexOf("\\c $nextChapter")))
+        } else {
+            selection.addAll(lines.subList(lines.indexOf("\\c $chapter"), lines.size))
+        }
+
+        return selection.joinToString(System.lineSeparator())
+
+
+    }
     /**
      * Function to get all the books of the Bible
      * Is pulled from books.txt in resources folder
