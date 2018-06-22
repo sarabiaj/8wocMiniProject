@@ -31,7 +31,8 @@ class TopView: View(){
     // string property to hold chapter info
     var chapter = SimpleStringProperty("1")
     // number of chapters a book has
-    var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
+    //var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
+    var chapters = FXCollections.observableArrayList<String>(door43Manager.getChapters("Genesis"))
     // the available languages
     val languages = FXCollections.observableArrayList<String>(getLanguages())
     // string property to hold the language info
@@ -79,8 +80,13 @@ class TopView: View(){
                         button("search") {
                             action {
                                 val centerView = find(CenterView::class)
-                                centerView.updateText(
-                                        myController.search(book.value, chapter.value, language.value))
+                                if (book.value != null && chapter.value != null && language.value != null) {
+                                    centerView.updateText(
+                                            myController.search(book.value, chapter.value, language.value))
+                                }
+                                else{
+                                    centerView.updateText("Invalid, try again")
+                                }
 
                             }
                         }
