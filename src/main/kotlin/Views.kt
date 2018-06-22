@@ -2,6 +2,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Pos
 import javafx.scene.layout.VBox
+import javafx.scene.text.FontWeight
 import javafx.scene.text.TextAlignment
 import tornadofx.*
 import java.io.File
@@ -67,20 +68,31 @@ class TopView: View(){
             fieldset {
                 vbox {
                     // displays form horizontally
-                    hbox(60) {
-                        useMaxWidth = true
+                    hbox(30) {
+                        vbox(0){
+                            label ("USFM Reader"){
+
+                                style {
+                                    fontWeight = FontWeight.EXTRA_BOLD
+                                    fontSize = 20.px
+                                }
+                                wrapTextProperty().set(true)
+                            }
+
+                        }
+
                         // book field
-                        vbox(3) {
+                        vbox(5) {
                             label("Book:")
                             combobox(book, books)
                         }
                         // chapter field
-                        vbox(3) {
+                        vbox(5) {
                             label("Chapter:")
                             combobox(chapter, chapters)
                         }
                         // language field
-                        vbox(3) {
+                        vbox(5) {
                             label("Language:")
                             combobox(language, languages)
                         }
@@ -195,13 +207,17 @@ class MyController: Controller()  {
 
         lines.forEach {
             if(it.contains("\\v")){
-                selection.add(it.replace("\\v", ""))
+                var substr = ""
+                if(it.contains("\\f")){
+                    substr = it.substring(it.indexOf("\\f"), it.indexOf("\\f*")+3)
+                }
+                selection.add(it.replace("\\v", "").replace(substr, ""))
             } else if (it.contains("\\p")){
                 selection.add(System.lineSeparator())
             }
         }
 
-        return selection.joinToString()
+        return selection.joinToString("")
 
 
     }
