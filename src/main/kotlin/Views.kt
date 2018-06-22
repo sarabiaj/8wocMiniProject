@@ -39,6 +39,10 @@ class MasterView: View(){
 class TopView: View(){
     // the controller for the application
     private val myController = MyController()
+    // the available languages
+    private val languages = FXCollections.observableArrayList<String>(myController.getLanguages())
+    // string property to hold the language info
+    private val language = SimpleStringProperty("English")
     // A collection to hold the names of all the books of the Bible
     private val books = FXCollections.observableArrayList<String>(myController.getBooks("English"))
     // string property to hold book info
@@ -47,10 +51,6 @@ class TopView: View(){
     private var chapters = FXCollections.observableArrayList<String>(myController.getChapters("Genesis"))
     // string property to hold chapter info
     private var chapter = SimpleStringProperty("1")
-    // the available languages
-    private val languages = FXCollections.observableArrayList<String>(myController.getLanguages())
-    // string property to hold the language info
-    private val language = SimpleStringProperty("English")
     // the centerview in the application
     private val centerView = find(CenterView::class)
     // the size of the text
