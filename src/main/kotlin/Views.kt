@@ -1,6 +1,7 @@
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Pos
+import javafx.stage.Screen
 import javafx.scene.layout.VBox
 import javafx.scene.text.FontWeight
 import javafx.scene.text.TextAlignment
@@ -23,8 +24,9 @@ class MasterView: View(){
 
     init{
         with(root){
-            prefWidth = 800.00
-            prefHeight = 600.00
+            val primaryScreenBounds = Screen.getPrimary().getVisualBounds()
+            prefWidth = primaryScreenBounds.getWidth()/1.75
+            prefHeight = primaryScreenBounds.getHeight()/1.5
         }
     }
 
