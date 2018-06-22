@@ -29,7 +29,7 @@ class MasterView: View(){
     init{
         with(root){
             val primaryScreenBounds = Screen.getPrimary().getVisualBounds()
-            prefWidth = primaryScreenBounds.getWidth()/1.75
+            prefWidth = primaryScreenBounds.getWidth()/1.6
             prefHeight = primaryScreenBounds.getHeight()/1.5
         }
     }
