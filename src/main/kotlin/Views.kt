@@ -260,6 +260,12 @@ class MyController: Controller()  {
                 if(it.contains("\\f")){
                     substr = it.substring(it.indexOf("\\f"), it.indexOf("\\f*") + 3)
                 }
+                if(it.contains("\\add")){
+                    substr = it.substring(it.indexOf("\\add"), it.indexOf("\\add*")+5)
+                }
+                if(it.contains("\\pn")){
+                    substr = it.substring(it.indexOf("\\pn"), it.indexOf("\\pn*")+4)
+                }
                 // replace the \v and the footmarks
                 selection.add(it.replace("\\v", "").replace(substr, ""))
             } else if (it.contains("\\p")){
