@@ -57,7 +57,7 @@ class TopView: View(){
     private val textSize = SimpleIntegerProperty(centerView.getFontSize().toInt())
 
     override val root = Form()
-    // form to allow selction o
+    // form to allow user to make a selection
     init {
         // adds a listener to update books to be in selected language
         language.addListener { obs, old, new ->

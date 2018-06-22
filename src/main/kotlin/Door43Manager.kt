@@ -6,13 +6,18 @@ import java.net.URL
 import java.nio.charset.Charset
 
 
+/**
+ * Alex Liu - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
+ * this class manages connection with Door43 api
+ * the functions here take care of accessing all of the json data
+ */
 class Door43Manager(private val api: Api = Api()){
     private val callResponse = api.getLanguage("") // gets the main call response
     private val retrieved = callResponse.execute() // executes the call response
     private val selectedBooks: ArrayList<bookResponse> = ArrayList() // and arraylist of all the bookResponses
 
     /**
-     * this function gets the number of languages in the apu
+     * this function gets the number of languages in the api
      */
     fun getLanguages(): List<String>{
         // list to be returned
