@@ -39,7 +39,7 @@ class Door43Manager(private val api: Api = Api()){
             var resource: ResourceResponse? = languageResponse!!.resources.find { it.subject == "Bible" }
             // searches each book in the resource
             for (book in resource!!.projects) {
-                
+
                 // adds to the selected books and the return
                 selectedBooks.add(book)
                 books.add(book.title)
