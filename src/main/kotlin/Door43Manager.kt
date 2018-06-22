@@ -40,6 +40,7 @@ class Door43Manager(private val api: Api = Api()){
      */
     fun getBooks(language: String): List<String>?{
         // books to be returned
+        selectedBooks.clear()
         val books = ArrayList<String>()
         try {
             // finds the correct resource
