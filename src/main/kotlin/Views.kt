@@ -193,6 +193,7 @@ class MyController: Controller()  {
             if(it.contains("\\v")){
                 var substr = ""
                 if(it.contains("\\f")){
+                    substr = it.substring(it.indexOf("\\f"), it.indexOf("\\f*") + 3)
                 }
                 selection.add(it.replace("\\v", "").replace(substr, ""))
             } else if (it.contains("\\p")){
