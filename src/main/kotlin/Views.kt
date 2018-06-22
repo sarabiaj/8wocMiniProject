@@ -27,26 +27,29 @@ class TopView: View(){
     // A collection to hold the names of all the books of the Bible
     val books = FXCollections.observableArrayList<String>(door43Manager.getBooks("English"))
     // string property to hold book info
-    var book = SimpleStringProperty()
+    var book = SimpleStringProperty("Genesis")
     // string property to hold chapter info
-    var chapter = SimpleStringProperty()
+    var chapter = SimpleStringProperty("1")
     // number of chapters a book has
     var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
     // the available languages
     val languages = FXCollections.observableArrayList<String>(getLanguages())
     // string property to hold the language info
-    val language = SimpleStringProperty()
+    val language = SimpleStringProperty("English")
 
     override val root = Form()
     // form to allow selction o
     init {
         language.addListener { obs, old, new ->
             updateBooks(new)
+            chapter.value = ""
         }
 
         // listener that finds a chapter when called
         book.addListener {  obs, old, new ->
-            updateChapters(new)
+            if(book.value != null) {
+                updateChapters(new)
+            }
         }
         with(root) {
             fieldset {

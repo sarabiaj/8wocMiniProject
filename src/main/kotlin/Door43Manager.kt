@@ -20,7 +20,9 @@ class Door43Manager(private val api: Api = Api()){
         // checks if had be recieved
         if(retrieved.isSuccessful){
             for (language in retrieved.body().languages){
-                ret.add(language.title)
+                if (getBooks(language.title) != null) {
+                    ret.add(language.title)
+                }
             }
         }
         return ret
@@ -39,10 +41,11 @@ class Door43Manager(private val api: Api = Api()){
             var resource: ResourceResponse? = languageResponse!!.resources.find { it.subject == "Bible" }
             // searches each book in the resource
             for (book in resource!!.projects) {
-
-                // adds to the selected books and the return
-                selectedBooks.add(book)
-                books.add(book.title)
+                if (book.formats.find { it.format == "text/usfm" } != null) {
+                    // adds to the selected books and the return
+                    selectedBooks.add(book)
+                    books.add(book.title)
+                }
             }
         }catch (e: NullPointerException){
             // in case of null pointer exception returns null
