@@ -115,8 +115,13 @@ class TopView: View(){
 
                         // search field
                         button("Search") {
-                            setPrefWidth(80.00)
+                            setPrefWidth(90.00)
                             setPrefHeight(50.00)
+                            style{
+                                fontSize = 16.px
+                                backgroundColor += c("#d49942")
+                                borderWidth += box(3.px)
+                            }
                             action {
                                 // checks if the book chapter and language have values the update the text
                                 if (book.value != null && chapter.value != null && language.value != null) {
@@ -159,7 +164,7 @@ class CenterView: View(){
     // the chapter text
     var bibleText = SimpleStringProperty()
     // the font text
-    var bibleFont = SimpleObjectProperty<Font>(Font(20.0))
+    var bibleFont = SimpleObjectProperty<Font>(Font(15.0))
 
     // form to allow to read selection
     init {
