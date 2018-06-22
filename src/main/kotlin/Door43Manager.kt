@@ -25,6 +25,7 @@ class Door43Manager(private val api: Api = Api()){
                 }
             }
         }
+        ret.sort()
         return ret
     }
 
