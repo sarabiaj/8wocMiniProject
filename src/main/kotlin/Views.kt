@@ -18,6 +18,13 @@ class MasterView: View(){
         center<CenterView>()
     }
 
+    init{
+        with(root){
+            prefWidth = 700.00
+            prefHeight = 500.00
+        }
+    }
+
 }
 
 class TopView: View(){
@@ -58,38 +65,39 @@ class TopView: View(){
             fieldset {
                 vbox {
                     // displays form horizontally
-                    hbox(20) {
+                    hbox(60) {
+                        useMaxWidth = true
                         // book field
-                        vbox(5) {
+                        vbox(3) {
                             label("Book:")
                             combobox(book, books)
                         }
                         // chapter field
-                        vbox(5) {
+                        vbox(3) {
                             label("Chapter:")
                             combobox(chapter, chapters)
                         }
                         // language field
-                        vbox(5) {
+                        vbox(3) {
                             label("Language:")
                             combobox(language, languages)
                         }
 
                         addClass(AppStyle.wrapper)
-                    }
-                    hbox {
+
+
                         // search field
-                        button("search") {
+                        button("Search") {
+                            setPrefWidth(80.00)
+                            setPrefHeight(50.00)
                             action {
                                 val centerView = find(CenterView::class)
                                 if (book.value != null && chapter.value != null && language.value != null) {
                                     centerView.updateText(
                                             myController.search(book.value, chapter.value))
-                                }
-                                else{
+                                } else {
                                     centerView.updateText("Invalid, try again")
                                 }
-
                             }
                         }
                         addClass(AppStyle.wrapper)
@@ -99,6 +107,7 @@ class TopView: View(){
         }
     }
 }
+
 
 class CenterView: View(){
     override val root = VBox()
@@ -113,6 +122,9 @@ class CenterView: View(){
                 wrapTextProperty().set(true)
                 editableProperty().set(false)
                 useMaxWidth = true
+                useMaxHeight = true
+                prefWidth = 400.00
+                prefHeight = 400.00
             }
             addClass(AppStyle.textWrapper)
 
