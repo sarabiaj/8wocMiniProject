@@ -22,19 +22,19 @@ class MasterView: View(){
 }
 
 class TopView: View(){
-    val door43Manager: Door43Manager = Door43Manager()
+
     val myController = MyController()
     // A collection to hold the names of all the books of the Bible
-    val books = FXCollections.observableArrayList<String>(door43Manager.getBooks("English"))
+    val books = FXCollections.observableArrayList<String>(myController.getBooks("English"))
     // string property to hold book info
     var book = SimpleStringProperty("Genesis")
     // string property to hold chapter info
     var chapter = SimpleStringProperty("1")
     // number of chapters a book has
     //var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
-    var chapters = FXCollections.observableArrayList<String>(door43Manager.getChapters("Genesis"))
+    var chapters = FXCollections.observableArrayList<String>(myController.getChapters("Genesis"))
     // the available languages
-    val languages = FXCollections.observableArrayList<String>(getLanguages())
+    val languages = FXCollections.observableArrayList<String>(myController.getLanguages())
     // string property to hold the language info
     val language = SimpleStringProperty("English")
 
@@ -42,14 +42,16 @@ class TopView: View(){
     // form to allow selction o
     init {
         language.addListener { obs, old, new ->
-            updateBooks(new)
+            books.clear()
+            books.addAll(myController.getBooks(new))
             chapter.value = ""
         }
 
         // listener that finds a chapter when called
         book.addListener {  obs, old, new ->
             if(book.value != null) {
-                updateChapters(new)
+                chapters.clear()
+                chapters.addAll(myController.getChapters(book.value))
             }
         }
         with(root) {
@@ -98,32 +100,7 @@ class TopView: View(){
 
     }
 
-    /**
-     * Function to get all the books of the Bible
-     * Is pulled from books.txt in resources folder
-     */
-    fun updateBooks(language: String){
-        books.clear()
-        books.addAll(door43Manager.getBooks(language)!!)
 
-    }
-
-    /**
-    * helper function gets the number of chapters a book has
-    * returns 0 as default
-    */
-    private fun updateChapters(book: String){
-        chapters.clear()
-        chapters.addAll(door43Manager.getChapters(book))
-    }
-
-    /**
-     * Temp Help function to get a list of languages
-     */
-
-    private fun getLanguages(): List<String>{
-        return door43Manager.getLanguages()
-    }
 }
 
 class CenterView: View(){
@@ -152,6 +129,7 @@ class CenterView: View(){
 }
 
 class MyController: Controller()  {
+    val door43Manager: Door43Manager = Door43Manager()
     fun writeToDb(inputValue: String) {
         println("Writing $inputValue to database!")
     }
@@ -159,6 +137,31 @@ class MyController: Controller()  {
     fun search(book: String, chapter: String, language: String): String{
         // makes some function call here
         return "Book: $book Chapter: $chapter Language: $language"
+    }
+
+    /**
+     * Function to get all the books of the Bible
+     * Is pulled from books.txt in resources folder
+     */
+    fun getBooks(language: String): List<String>{
+        return door43Manager.getBooks(language)!!
+
+    }
+
+    /**
+     * helper function gets the number of chapters a book has
+     * returns 0 as default
+     */
+    fun getChapters(book: String): List<String>{
+        return door43Manager.getChapters(book)!!
+    }
+
+    /**
+     * Temp Help function to get a list of languages
+     */
+
+    fun getLanguages(): List<String>{
+        return door43Manager.getLanguages()
     }
 }
 
