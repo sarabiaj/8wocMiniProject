@@ -37,28 +37,31 @@ class MasterView: View(){
 }
 
 class TopView: View(){
-
+    // the controller for the application
     private val myController = MyController()
     // A collection to hold the names of all the books of the Bible
     private val books = FXCollections.observableArrayList<String>(myController.getBooks("English"))
     // string property to hold book info
     private var book = SimpleStringProperty("Genesis")
-    // string property to hold chapter info
-    private var chapter = SimpleStringProperty("1")
-    // number of chapters a book has
     //var chapters = FXCollections.observableArrayList<String>(arrayListOf("0"))
     private var chapters = FXCollections.observableArrayList<String>(myController.getChapters("Genesis"))
+    // string property to hold chapter info
+    private var chapter = SimpleStringProperty("1")
     // the available languages
     private val languages = FXCollections.observableArrayList<String>(myController.getLanguages())
     // string property to hold the language info
     private val language = SimpleStringProperty("English")
+    // the centerview in the application
     private val centerView = find(CenterView::class)
+    // the size of the text
     private val textSize = SimpleIntegerProperty(centerView.getFontSize().toInt())
 
     override val root = Form()
     // form to allow selction o
     init {
+        // adds a listener to update books to be in selected language
         language.addListener { obs, old, new ->
+            // empties books and adds new ones
             books.clear()
             books.addAll(myController.getBooks(new))
             book.value = books[0]
@@ -67,6 +70,7 @@ class TopView: View(){
         // listener that finds a chapter when called
         book.addListener {  obs, old, new ->
             if(new != null) {
+                // clears chapters and adds new ones
                 chapters.clear()
                 chapters.addAll(myController.getChapters(new))
                 chapter.value = "1"
@@ -114,11 +118,12 @@ class TopView: View(){
                             setPrefWidth(80.00)
                             setPrefHeight(50.00)
                             action {
-
+                                // checks if the book chapter and language have values the update the text
                                 if (book.value != null && chapter.value != null && language.value != null) {
                                     centerView.updateText(
-                                            myController.search(book.value, chapter.value), book.value, chapter.value)
+                                            myController.search(book.value, chapter.value))
                                 } else {
+                                    // else notify user
                                     centerView.updateText("Invalid, try again")
                                 }
                             }
@@ -128,11 +133,13 @@ class TopView: View(){
                     }
 
                     hbox {
+                        // field to change the text size
                         field("Text Size") {
-                            val centerView = find(CenterView::class)
                             textfield (textSize)
                         }
+                        // field for a button to change text size
                         button("Change font Size"){
+                            // when pressed updates font size
                             action {
                                 if(textSize.value != null){
                                     centerView.updateFontSize(textSize.doubleValue())
@@ -149,10 +156,9 @@ class TopView: View(){
 
 class CenterView: View(){
     override val root = VBox()
-
-    var book = SimpleStringProperty()
-    var chapter = SimpleStringProperty()
+    // the chapter text
     var bibleText = SimpleStringProperty()
+    // the font text
     var bibleFont = SimpleObjectProperty<Font>(Font(20.0))
 
     // form to allow to read selection
@@ -160,6 +166,7 @@ class CenterView: View(){
         with(root) {
             scrollpane(true,false) {
                 vbox {
+                    // a label the contains the bible text
                     label {
                         alignmentProperty().value = Pos.CENTER
                         textProperty().bind(bibleText)
@@ -179,22 +186,23 @@ class CenterView: View(){
 
     }
 
-
+    /**
+     * Function that updates the text given new text
+     */
     fun updateText(text: String){
-        this.book.value = text
-    }
-
-    fun updateText(text: String, book: String, chapter: String){
-        println(book)
-        this.book.value = book
-        this.chapter.value = chapter
         bibleText.value = text
     }
 
+    /**
+     * gets the current font size
+     */
     fun getFontSize(): Double{
         return bibleFont.value.size
     }
 
+    /**
+     * updates the current font size
+     */
     fun updateFontSize(size: Double){
         bibleFont.set(Font(size))
     }
@@ -206,35 +214,52 @@ class MyController: Controller()  {
         println("Writing $inputValue to database!")
     }
 
+    /**
+     * Searches for the USFM file given a book and chapter
+     */
     fun search(book: String, chapter: String): String{
         // makes some function call here
         val text = door43Manager.getUSFM(book)
         return parseUSFM(text!!, chapter)
     }
 
+    /**
+     * function that parses the USFM given text and a chapter
+     */
     fun parseUSFM(text: String, chapter: String): String{
+        // a list of lines in the text
         var lines = text.lines()
+        // the next chapter after the one being searched
         val nextChapter = (chapter.toInt() + 1).toString()
+        // the list that conatins the text to be returned
         val selection = arrayListOf<String>()
 
+        // gets a sublist up to the next chapter or end of file
         lines = if(lines.indexOf("\\c $nextChapter") > 0) {
             lines.subList(lines.indexOf("\\c $chapter"), lines.indexOf("\\c $nextChapter"))
         } else {
             lines.subList(lines.indexOf("\\c $chapter"), lines.size)
         }
 
+        // looks through each line adding verses
         lines.forEach {
+            // checks if line contains a verse
             if(it.contains("\\v")){
+                // substring for footmarks
                 var substr = ""
+                // if found sets substring eqaul to the footmark
                 if(it.contains("\\f")){
                     substr = it.substring(it.indexOf("\\f"), it.indexOf("\\f*") + 3)
                 }
+                // replace the \v and the footmarks
                 selection.add(it.replace("\\v", "").replace(substr, ""))
             } else if (it.contains("\\p")){
+                // if contains a \p means end of paragraph
                 selection.add(System.lineSeparator())
             }
         }
 
+        // returns the full selection
         return selection.joinToString("")
 
 
@@ -245,7 +270,6 @@ class MyController: Controller()  {
      */
     fun getBooks(language: String): List<String>{
         return door43Manager.getBooks(language)!!
-
     }
 
     /**
@@ -259,7 +283,6 @@ class MyController: Controller()  {
     /**
      * Temp Help function to get a list of languages
      */
-
     fun getLanguages(): List<String>{
         return door43Manager.getLanguages()
     }

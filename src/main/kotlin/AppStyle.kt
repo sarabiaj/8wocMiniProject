@@ -7,8 +7,8 @@ class AppStyle: Stylesheet(){
     companion object {
         // wrapper used for fields
         val wrapper by cssclass()
+        // wrapper used for text
         val textWrapper by cssclass()
-        val title by cssclass()
     }
 
     init {
