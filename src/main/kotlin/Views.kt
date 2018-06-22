@@ -100,7 +100,7 @@ class TopView: View(){
     }
 
     /**
-    * Temp helper function gets the number of chapters a book has
+    * helper function gets the number of chapters a book has
     * returns 0 as default
     */
     private fun updateChapters(book: String){
