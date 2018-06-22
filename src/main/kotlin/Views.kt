@@ -121,21 +121,21 @@ class CenterView: View(){
     // form to allow to read selection
     init {
         with(root) {
-            scrollpane {
+            scrollpane(true,false) {
                 vbox {
                     label {
                         alignmentProperty().value = Pos.CENTER
                         textProperty().bind(book)
                         wrapTextProperty().set(true)
                         textAlignmentProperty().value = TextAlignment.CENTER
-                        prefWidth = 400.00
+
                     }
                     label {
                         alignmentProperty().value = Pos.CENTER
                         textProperty().bind(chapter)
                         wrapTextProperty().set(true)
                         textAlignmentProperty().value = TextAlignment.CENTER
-                        prefWidth = 400.00
+
                     }
                     label {
                         alignmentProperty().value = Pos.CENTER
@@ -144,12 +144,10 @@ class CenterView: View(){
                         textAlignmentProperty().value = TextAlignment.CENTER
 
                     }
-                    useMaxWidth = true
-                    useMaxHeight = true
-                    prefWidth = 400.0
+                    //useMaxWidth = true
+                    //useMaxHeight = true
                 }
-                prefHeight = 400.0
-                prefWidth = 400.0
+                prefHeight = 1000.0
             }
             alignmentProperty().value = Pos.CENTER
             addClass(AppStyle.textWrapper)
