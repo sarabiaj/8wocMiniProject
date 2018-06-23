@@ -125,8 +125,7 @@ class TopView: View(){
                             action {
                                 // checks if the book chapter and language have values the update the text
                                 if (book.value != null && chapter.value != null && language.value != null) {
-                                    centerView.updateText(
-                                            myController.search(book.value, chapter.value))
+                                    centerView.updateText(myController.search(book.value, chapter.value))
                                 } else {
                                     // else notify user
                                     centerView.updateText("Invalid, try again")
@@ -154,6 +153,36 @@ class TopView: View(){
                                     }
                                 }
 
+
+                            }
+                        }
+                        field {
+                            button("prev") {
+                                action {
+                                    if (chapter.value.toInt() - 1 < 1) {
+                                        if (book.value != books[0]) {
+                                            book.value = books[books.indexOf(book.value) - 1]
+                                            chapter.value = chapters[chapters.size - 1].toString()
+                                        }
+                                    } else {
+                                        chapter.value = (chapter.value.toInt() - 1).toString()
+                                    }
+                                    centerView.updateText(myController.search(book.value, chapter.value))
+                                }
+
+                            }
+                            button("next") {
+                                action {
+                                    if (chapter.value.toInt() + 1 > chapters.size) {
+                                        if (book.value != books[books.size - 1]) {
+                                            book.value = books[books.indexOf(book.value) + 1]
+                                            chapter.value = 1.toString()
+                                        }
+                                    } else {
+                                        chapter.value = (chapter.value.toInt() + 1).toString()
+                                    }
+                                    centerView.updateText(myController.search(book.value, chapter.value))
+                                }
 
                             }
                         }
