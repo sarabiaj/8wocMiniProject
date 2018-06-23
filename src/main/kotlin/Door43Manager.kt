@@ -84,6 +84,31 @@ class Door43Manager(private val api: Api = Api()){
         return chapters
     }
 
+    fun getVerses(book: String, chapter: String): ArrayList<String> {
+
+        // chapters that will be returned
+        val verses = ArrayList<String>()
+
+        // the text in the USFM file
+        var text = getUSFM(book)!!
+        val nextChapter = if (text.contains("\\c ${chapter.toInt() + 1}")){
+            text.indexOf("\\c ${chapter.toInt() + 1}")
+        } else {
+            text.length
+        }
+        text = text.substring(text.indexOf("\\c $chapter"), nextChapter)
+        // start number of chapters
+        var numVerses = 1
+        // goes through lines
+        for (line in text.lines()) {
+            if(line.contains("\\v")){
+                verses.add(numVerses.toString())
+                numVerses++
+            }
+        }
+        return verses
+    }
+
     /**
      * gets the USFM file given a book
      * selected books must already have data
