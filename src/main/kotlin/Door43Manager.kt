@@ -84,6 +84,27 @@ class Door43Manager(private val api: Api = Api()){
         return chapters
     }
 
+    /**
+     * gets the USFM file given a book
+     * selected books must already have data
+     */
+    fun getUSFM(book: String): String?{
+        try {
+            // searches through the formats of the selected books
+            for(format in selectedBooks.find { it.title == book }!!.formats){
+                // if the format is of type USFM then return
+                if(format.format == "text/usfm"){
+                    return URL(format.url).readText()
+                }
+            }
+        } catch (e: NullPointerException){
+            // todo fix
+            return null
+        }
+        return null
+
+    }
+
     fun getVerses(book: String, chapter: String): ArrayList<String> {
 
         // chapters that will be returned
@@ -107,27 +128,6 @@ class Door43Manager(private val api: Api = Api()){
             }
         }
         return verses
-    }
-
-    /**
-     * gets the USFM file given a book
-     * selected books must already have data
-     */
-    fun getUSFM(book: String): String?{
-        try {
-            // searches through the formats of the selected books
-            for(format in selectedBooks.find { it.title == book }!!.formats){
-                // if the format is of type USFM then return
-                if(format.format == "text/usfm"){
-                    return URL(format.url).readText()
-                }
-            }
-        } catch (e: NullPointerException){
-            // todo fix
-            return null
-        }
-        return null
-
     }
 
 }

@@ -125,9 +125,14 @@ class TopView: View(){
                             combobox(language, languages)
                         }
 
-                        addClass(AppStyle.wrapper)
-
-
+                        vbox(5) {
+                            label("From: ")
+                            combobox(verseStart, verses)
+                        }
+                        vbox(5) {
+                            label ("To: ")
+                            combobox(verseEnd, verses)
+                        }
                         // search field
                         button("Search") {
                             setPrefWidth(90.00)
@@ -140,13 +145,10 @@ class TopView: View(){
                             action {
                                 // checks if the book chapter and language have values the update the text
                                 if (book.value != null && chapter.value != null && language.value != null) {
-                                    if(verseStart.value != null && verseEnd.value != null &&
-                                            verseStart.value.toInt() < verseEnd.value.toInt()){
-                                        centerView.updateText(
-                                                myController.search(book.value, chapter.value, verseStart.value, verseEnd.value ))
-                                    } else {
-                                        centerView.updateText(myController.search(book.value, chapter.value))
-                                    }
+                                    centerView.updateText(
+                                            myController.search(
+                                                    book.value, chapter.value, verseStart.value, verseEnd.value ))
+
                                 } else {
                                     // else notify user
                                     centerView.updateText("Invalid, try again")
@@ -157,19 +159,16 @@ class TopView: View(){
                         addClass(AppStyle.wrapper)
                     }
 
-                    hbox(10) {
-                        // field to change the text size
-                        field("Text Size") {
-                            textfield (textSize){
+                    hbox(20) {
+                        field("Text Size:") {
+                            textfield(textSize){
                                 prefWidth = 50.0
                             }
-                        }
-                        field {
                             // field for a button to change text size
                             button("Change font Size") {
                                 // when pressed updates font size
                                 action {
-                                    if (textSize.value != null) {
+                                    if (textSize.value != null && textSize.value > 0 && textSize.value < 100) {
                                         centerView.updateFontSize(textSize.doubleValue())
                                     }
                                 }
@@ -177,14 +176,10 @@ class TopView: View(){
 
                             }
                         }
-                        field("Verses Start: ") {
-                            combobox(verseStart, verses)
-                        }
-                        field("To:") {
-                            combobox(verseEnd, verses)
-                        }
+
                         field {
-                            button("prev") {
+                            label("Chapters:")
+                            button("Prev") {
                                 action {
                                     // checks if the chapter can be decremented
                                     if (chapter.value.toInt() - 1 < 1) {
@@ -200,11 +195,12 @@ class TopView: View(){
                                         chapter.value = (chapter.value.toInt() - 1).toString()
                                     }
                                     // updates displayed text
-                                    centerView.updateText(myController.search(book.value, chapter.value))
+                                    centerView.updateText(myController.search(
+                                            book.value, chapter.value, null ,null))
                                 }
 
                             }
-                            button("next") {
+                            button("Next") {
                                 action {
                                     // checks if chapter can be incremented
                                     if (chapter.value.toInt() + 1 > chapters.size) {
@@ -220,7 +216,8 @@ class TopView: View(){
                                         chapter.value = (chapter.value.toInt() + 1).toString()
                                     }
                                     // updates text
-                                    centerView.updateText(myController.search(book.value, chapter.value))
+                                    centerView.updateText(myController.search(
+                                            book.value, chapter.value, null, null))
                                 }
 
                             }
@@ -289,28 +286,21 @@ class CenterView: View(){
 
 class MyController: Controller()  {
     val door43Manager: Door43Manager = Door43Manager()
-    fun writeToDb(inputValue: String) {
-        println("Writing $inputValue to database!")
-    }
+    var text: String? = null
+    var book: String? = null
 
-    /**
-     * Searches for the USFM file given a book and chapter
-     */
-    fun search(book: String, chapter: String): String{
-        // makes some function call here
-        val text = door43Manager.getUSFM(book)
-        return parseUSFM(text!!, chapter)
-    }
-
-    fun search(book: String, chapter: String, verseStart: String, verseEnd: String): String{
-        val text = door43Manager.getUSFM(book)
+    fun search(book: String, chapter: String, verseStart: String?, verseEnd: String?): String{
+        if(text == null || (this.book == null || this.book != book)) {
+            text = door43Manager.getUSFM(book)
+            this.book = book
+        }
         return parseUSFM(text!!, chapter, verseStart, verseEnd)
     }
 
     /**
      * function that parses the USFM given text and a chapter
      */
-    fun parseUSFM(text: String, chapter: String): String{
+    fun parseUSFM(text: String, chapter: String, verseStart: String?, verseEnd: String?): String{
         // a list of lines in the text
         var lines = ArrayList<String>()
         // the next chapter after the one being searched
@@ -327,16 +317,21 @@ class MyController: Controller()  {
         } else {
             ArrayList(lines.subList(lines.indexOf("\\c $chapter"), lines.size))
         }
+        if((verseStart != null && verseEnd != null)){
+            var start = lines.indexOf(lines.find { i -> i.contains("\\v $verseStart")})
+            var end = lines.indexOf(lines.find { i -> i.contains("\\v $verseEnd")})
+            if(start < end) {
+                lines = ArrayList(lines.subList(start, end))
+            }
+        }
 
         return parse(lines)
     }
 
-    fun parseUSFM(text: String, chapter: String, verseStart: String, verseEnd: String): String{
-        return parse(text.substring(text.indexOf("\\v $verseStart"),
-                text.indexOf("\\v $verseEnd")).lines())
-
+    fun parseVerses(){
 
     }
+
     fun parse(lines: List<String>): String{
         val selection = ArrayList<String>()
         // looks through each line adding verses
@@ -366,6 +361,22 @@ class MyController: Controller()  {
         // returns the full selection
         return selection.joinToString("")
     }
+
+    fun getVerses(): ArrayList<String> {
+        // chapters that will be returned
+        val verses = ArrayList<String>()
+
+        // start number of chapters
+        var numVerses = 1
+        // goes through lines
+        for (line in text!!.lines()) {
+            if(line.contains("\\v")){
+                verses.add(numVerses.toString())
+                numVerses++
+            }
+        }
+        return verses
+    }
     /**
      * Function to get all the books of the Bible
      * Is pulled from books.txt in resources folder
@@ -390,7 +401,11 @@ class MyController: Controller()  {
     }
 
     fun getVerses(book: String, chapter: String): List<String>{
-        return door43Manager.getVerses(book, chapter)
+        return if(text != null){
+            getVerses()
+        } else {
+            door43Manager.getVerses(book, chapter)
+        }
     }
 }
 
