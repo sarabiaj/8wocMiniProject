@@ -1,6 +1,10 @@
 import retrofit2.*
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+/**
+ * Alex Liu, Jennifer Huang - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
+ * This class holds information for the door43 api
+ */
 class Api(){
     private val door43Api: Door43Api
 

@@ -7,7 +7,7 @@ import java.nio.charset.Charset
 
 
 /**
- * Alex Liu - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
+ * Alex Liu, Jennifer Huang - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
  * this class manages connection with Door43 api
  * the functions here take care of accessing all of the json data
  */
@@ -55,8 +55,6 @@ class Door43Manager(private val api: Api = Api()){
                 }
             }
         }catch (e: NullPointerException){
-            // in case of null pointer exception returns null
-            // TODO dont return null notify user instead
             return null
         }
         return books

@@ -13,7 +13,7 @@ import tornadofx.*
 import java.io.File
 
 /**
- * Alex Liu - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
+ * Alex Liu, Jennifer Huang - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
  * These classes are the views for the application
  * The master view will be embedded with the top and center views
  * The Top view is for searching through the bible
@@ -219,6 +219,8 @@ class TopView: View(){
                                     // updates text
                                     centerView.updateText(myController.search(
                                             book.value, chapter.value, null, null))
+                                    verses.clear()
+                                    verses.addAll(myController.getVerses(book.value, chapter.value))
                                 }
 
                             }
@@ -336,11 +338,8 @@ class MyController: Controller()  {
     fun getVerses(book: String, chapter: String): List<String>{
         // if text != null gets verses from stored text
         // else goes through door43
-        return if(text != null){
-            getVerses()
-        } else {
-            door43Manager.getVerses(book, chapter)
-        }
+        return door43Manager.getVerses(book, chapter)
+
     }
 
     /**
@@ -408,26 +407,6 @@ class MyController: Controller()  {
 
         // returns the full selection
         return selection.joinToString("")
-    }
-
-    /**
-     * helper function for getting verses
-     * only used if text != null
-     */
-    private fun getVerses(): ArrayList<String> {
-        // verses that will be returned
-        val verses = ArrayList<String>()
-
-        // start number of verses
-        var numVerses = 1
-        // goes through lines
-        for (line in text!!.lines()) {
-            if(line.contains("\\v")){
-                verses.add(numVerses.toString())
-                numVerses++
-            }
-        }
-        return verses
     }
 
 }
