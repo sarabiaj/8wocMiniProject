@@ -1,3 +1,4 @@
+// data class for storing the catalog
 class CatalogResponse(val languages: List<LanguageResponse>)
 
 // data class for the languages

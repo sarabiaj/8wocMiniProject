@@ -13,7 +13,7 @@ import tornadofx.*
 import java.io.File
 
 /**
- * Alex Liu - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
+ * Alex Liu, Jennifer Huang - Wycliffe Associates - 6/20/2018 - 8wocMiniChallenge
  * These classes are the views for the application
  * The master view will be embedded with the top and center views
  * The Top view is for searching through the bible
