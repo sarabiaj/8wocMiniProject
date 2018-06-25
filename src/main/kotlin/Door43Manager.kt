@@ -85,7 +85,35 @@ class Door43Manager(private val api: Api = Api()){
     }
 
     /**
-     * gets the USFM file given a book
+     * function to get verses from a selection
+     */
+    fun getVerses(book: String, chapter: String): ArrayList<String> {
+
+        // verses that will be returned
+        val verses = ArrayList<String>()
+
+        // the text in the USFM file
+        var text = getUSFM(book)!!
+        val nextChapter = if (text.contains("\\c ${chapter.toInt() + 1}")){
+            text.indexOf("\\c ${chapter.toInt() + 1}")
+        } else {
+            text.length
+        }
+        text = text.substring(text.indexOf("\\c $chapter"), nextChapter)
+        // start number of verses
+        var numVerses = 1
+        // goes through lines
+        for (line in text.lines()) {
+            if(line.contains("\\v")){
+                verses.add(numVerses.toString())
+                numVerses++
+            }
+        }
+        return verses
+    }
+
+    /**
+     * helper function that gets the USFM file given a book
      * selected books must already have data
      */
     fun getUSFM(book: String): String?{
@@ -98,7 +126,6 @@ class Door43Manager(private val api: Api = Api()){
                 }
             }
         } catch (e: NullPointerException){
-            // todo fix
             return null
         }
         return null
