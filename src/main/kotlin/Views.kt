@@ -36,6 +36,7 @@ class MasterView: View(){
 
 }
 
+// this view displays the selection options
 class TopView: View(){
     // the controller for the application
     private val myController = MyController()
@@ -229,7 +230,7 @@ class TopView: View(){
     }
 }
 
-
+// this view displays the current selection
 class CenterView: View(){
     override val root = VBox()
     // the chapter text
@@ -284,11 +285,20 @@ class CenterView: View(){
     }
 }
 
+// this class deals with any function that do not pertain to the views
+// such as any function that interacts directly to the door43 manager
 class MyController: Controller()  {
-    val door43Manager: Door43Manager = Door43Manager()
-    var text: String? = null
-    var book: String? = null
+    // manages door43 api
+    private val door43Manager: Door43Manager = Door43Manager()
+    // the selected text
+    private var text: String? = null
+    // the selected book
+    private var book: String? = null
 
+    /**
+     * function to search for the text given a book and chapter
+     * able to also search for certain verses if given
+     */
     fun search(book: String, chapter: String, verseStart: String?, verseEnd: String?): String{
         if(text == null || (this.book == null || this.book != book)) {
             text = door43Manager.getUSFM(book)
@@ -298,9 +308,45 @@ class MyController: Controller()  {
     }
 
     /**
-     * function that parses the USFM given text and a chapter
+     * Function to get all the books of the Bible
+     * Is pulled from books.txt in resources folder
      */
-    fun parseUSFM(text: String, chapter: String, verseStart: String?, verseEnd: String?): String{
+    fun getBooks(language: String): List<String>{
+        return door43Manager.getBooks(language)!!
+    }
+
+    /**
+     * helper function gets the number of chapters a book has
+     * returns 0 as default
+     */
+    fun getChapters(book: String): List<String>{
+        return door43Manager.getChapters(book)!!
+    }
+
+    /**
+     * Temp Help function to get a list of languages
+     */
+    fun getLanguages(): List<String>{
+        return door43Manager.getLanguages()
+    }
+
+    /**
+     * function to get the number of verses
+     */
+    fun getVerses(book: String, chapter: String): List<String>{
+        // if text != null gets verses from stored text
+        // else goes through door43
+        return if(text != null){
+            getVerses()
+        } else {
+            door43Manager.getVerses(book, chapter)
+        }
+    }
+
+    /**
+     * helper function that parses the USFM given text and a chapter
+     */
+    private fun parseUSFM(text: String, chapter: String, verseStart: String?, verseEnd: String?): String{
         // a list of lines in the text
         var lines = ArrayList<String>()
         // the next chapter after the one being searched
@@ -317,9 +363,12 @@ class MyController: Controller()  {
         } else {
             ArrayList(lines.subList(lines.indexOf("\\c $chapter"), lines.size))
         }
+        // gets a sublist if only certain verses are needed
         if((verseStart != null && verseEnd != null)){
-            var start = lines.indexOf(lines.find { i -> i.contains("\\v $verseStart")})
-            var end = lines.indexOf(lines.find { i -> i.contains("\\v $verseEnd")})
+            // finds the start and end
+            val start = lines.indexOf(lines.find { i -> i.contains("\\v $verseStart")})
+            val end = lines.indexOf(lines.find { i -> i.contains("\\v $verseEnd")})
+            // checks if the start is less then the end
             if(start < end) {
                 lines = ArrayList(lines.subList(start, end))
             }
@@ -328,11 +377,10 @@ class MyController: Controller()  {
         return parse(lines)
     }
 
-    fun parseVerses(){
-
-    }
-
-    fun parse(lines: List<String>): String{
+    /**
+     * helper function for parsing the usfm selection
+     */
+    private fun parse(lines: List<String>): String{
         val selection = ArrayList<String>()
         // looks through each line adding verses
         lines.forEach {
@@ -362,11 +410,15 @@ class MyController: Controller()  {
         return selection.joinToString("")
     }
 
-    fun getVerses(): ArrayList<String> {
-        // chapters that will be returned
+    /**
+     * helper function for getting verses
+     * only used if text != null
+     */
+    private fun getVerses(): ArrayList<String> {
+        // verses that will be returned
         val verses = ArrayList<String>()
 
-        // start number of chapters
+        // start number of verses
         var numVerses = 1
         // goes through lines
         for (line in text!!.lines()) {
@@ -377,35 +429,6 @@ class MyController: Controller()  {
         }
         return verses
     }
-    /**
-     * Function to get all the books of the Bible
-     * Is pulled from books.txt in resources folder
-     */
-    fun getBooks(language: String): List<String>{
-        return door43Manager.getBooks(language)!!
-    }
 
-    /**
-     * helper function gets the number of chapters a book has
-     * returns 0 as default
-     */
-    fun getChapters(book: String): List<String>{
-        return door43Manager.getChapters(book)!!
-    }
-
-    /**
-     * Temp Help function to get a list of languages
-     */
-    fun getLanguages(): List<String>{
-        return door43Manager.getLanguages()
-    }
-
-    fun getVerses(book: String, chapter: String): List<String>{
-        return if(text != null){
-            getVerses()
-        } else {
-            door43Manager.getVerses(book, chapter)
-        }
-    }
 }
 
