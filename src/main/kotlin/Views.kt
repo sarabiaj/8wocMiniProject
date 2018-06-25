@@ -29,8 +29,8 @@ class MasterView: View(){
     init{
         with(root){
             val primaryScreenBounds = Screen.getPrimary().getVisualBounds()
-            prefWidth = primaryScreenBounds.getWidth()/1.6
-            prefHeight = primaryScreenBounds.getHeight()/1.5
+            prefWidth = primaryScreenBounds.getWidth()/1.4
+            prefHeight = primaryScreenBounds.getHeight()/1.4
         }
     }
 
@@ -148,7 +148,7 @@ class TopView: View(){
                                 if (book.value != null && chapter.value != null && language.value != null) {
                                     centerView.updateText(
                                             myController.search(
-                                                    book.value, chapter.value, verseStart.value, verseEnd.value ))
+                                                    book.value, chapter.value, verseStart.value, verseEnd.value))
 
                                 } else {
                                     // else notify user
